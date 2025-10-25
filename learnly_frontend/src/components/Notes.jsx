@@ -103,13 +103,13 @@ export default function Notes() {
     )
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 pl-80'>
+        <div className='min-h-screen bg-gray-900 pl-80'>
             <div className='container mx-auto px-8 py-12'>
                 {/* Header Section */}
                 <div className='mb-8 flex justify-between items-center'>
                     <div>
                         <h1 className='text-5xl font-bold text-white mb-2'>
-                            My <span className='text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400'>Notes</span>
+                            My Notes
                         </h1>
                         <p className='text-xl text-gray-300'>
                             Organize and manage your study materials
@@ -117,7 +117,7 @@ export default function Notes() {
                     </div>
                     <button
                         onClick={() => setIsAddingNote(!isAddingNote)}
-                        className='flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer'
+                        className='flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow cursor-pointer'
                     >
                         <MdAdd className='text-2xl text-white' />
                         <span className='text-white font-semibold'>New Note</span>
@@ -126,7 +126,7 @@ export default function Notes() {
 
                 {/* Add New Note Section */}
                 {isAddingNote && (
-                    <div className='mb-8 bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700'>
+                    <div className='mb-8 bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700'>
                         <h2 className='text-2xl font-semibold text-white mb-4'>Upload New Note</h2>
                         <div className='space-y-4'>
                             <div>
@@ -137,7 +137,7 @@ export default function Notes() {
                                     type='text'
                                     value={newNoteTitle}
                                     onChange={(e) => setNewNoteTitle(e.target.value)}
-                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500'
+                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
                                     placeholder='Enter note title...'
                                 />
                             </div>
@@ -148,7 +148,7 @@ export default function Notes() {
                                 <input
                                     type='file'
                                     onChange={handleFileSelect}
-                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500'
+                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
                                     accept='.pdf,.doc,.docx,.txt'
                                 />
                                 {newNoteFile && (
@@ -162,18 +162,18 @@ export default function Notes() {
                                         setNewNoteTitle('')
                                         setNewNoteFile(null)
                                     }}
-                                    className='px-6 py-2 bg-gray-600 text-gray-300 rounded-xl hover:bg-gray-500 transition-colors duration-300 cursor-pointer'
+                                    className='px-6 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors duration-200 cursor-pointer'
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleAddNote}
-                                    disabled={!newNoteTitle || !newNoteFile || isUploading}
-                                    className={`px-6 py-2 rounded-xl transition-all duration-300 ${
-                                        newNoteTitle && newNoteFile && !isUploading
-                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 cursor-pointer'
-                                            : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50'
-                                    }`}
+                                    disabled={!newNoteTitle || !newNoteFile}
+                                                            className={`px-6 py-2 rounded-lg transition-colors duration-200 ${
+                                         newNoteTitle && newNoteFile
+                                             ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                                             : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                                     }`}
                                 >
                                     {isUploading ? (
                                         <>
@@ -198,10 +198,10 @@ export default function Notes() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder='Search notes...'
-                            className='w-full pl-12 pr-4 py-3 bg-gray-800 text-white rounded-xl border border-gray-700 focus:outline-none focus:border-blue-500'
+                            className='w-full pl-12 pr-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500'
                         />
                     </div>
-                    <button className='px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 hover:bg-gray-700 transition-colors duration-300 cursor-pointer'>
+                    <button className='px-4 py-3 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700 transition-colors duration-200 cursor-pointer'>
                         <MdFilterList className='text-gray-300 text-xl' />
                     </button>
                 </div>
@@ -212,7 +212,7 @@ export default function Notes() {
                         {filteredNotes.map((note) => (
                             <div
                                 key={note.id}
-                                className='bg-gray-800 rounded-2xl shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300 overflow-hidden group flex flex-col'
+                                className='bg-gray-800 rounded-lg shadow-sm border border-gray-700 hover:shadow-md hover:border-gray-600 transition-all duration-200 overflow-hidden group flex flex-col'
                             >
                                 <div className='p-6 flex-1'>
                                     <div className='flex justify-between items-start mb-3'>
@@ -227,7 +227,7 @@ export default function Notes() {
                                         </span>
                                         <button
                                             onClick={() => handleDeleteNote(note.id)}
-                                            className='opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-red-400 hover:text-red-300 cursor-pointer'
+                                            className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-red-400 hover:text-red-300 cursor-pointer'
                                         >
                                             <MdDelete className='text-xl' />
                                         </button>
@@ -244,7 +244,7 @@ export default function Notes() {
                                     </div>
                                 </div>
                                 <div className='px-6 py-4 bg-gray-700/50 flex justify-end mt-auto'>
-                                    <button className='flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors duration-300 cursor-pointer'>
+                                    <button className='flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors duration-200 cursor-pointer'>
                                         <MdOpenInNew className='text-lg' />
                                         <span className='font-medium'>Open</span>
                                     </button>
@@ -259,43 +259,6 @@ export default function Notes() {
                         </p>
                     </div>
                 )}
-
-                {/* Stats Section */}
-                <div className='mt-12 grid grid-cols-1 md:grid-cols-3 gap-6'>
-                    <div className='bg-gray-800 rounded-2xl p-6 border border-gray-700'>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p className='text-gray-400 text-sm mb-1'>Total Notes</p>
-                                <p className='text-3xl font-bold text-white'>{notes.length}</p>
-                            </div>
-                            <div className='w-12 h-12 bg-blue-900/50 rounded-xl flex items-center justify-center'>
-                                <MdOpenInNew className='text-2xl text-blue-400' />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='bg-gray-800 rounded-2xl p-6 border border-gray-700'>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p className='text-gray-400 text-sm mb-1'>This Week</p>
-                                <p className='text-3xl font-bold text-white'>3</p>
-                            </div>
-                            <div className='w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center'>
-                                <MdAdd className='text-2xl text-purple-400' />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='bg-gray-800 rounded-2xl p-6 border border-gray-700'>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p className='text-gray-400 text-sm mb-1'>Total Size</p>
-                                <p className='text-3xl font-bold text-white'>7.4 MB</p>
-                            </div>
-                            <div className='w-12 h-12 bg-green-900/50 rounded-xl flex items-center justify-center'>
-                                <MdFilterList className='text-2xl text-green-400' />
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     )
