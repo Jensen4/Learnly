@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import NavBar from './components/NavBar'
+import HomePage from './pages/HomePage'
 
 function App() {
 
@@ -8,7 +8,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<NavBar />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </BrowserRouter>
     </>
