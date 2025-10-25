@@ -50,12 +50,12 @@ export default function Home() {
     ];
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 pl-80'>
+        <div className='min-h-screen bg-gray-900 pl-80'>
             <div className='container mx-auto px-8 py-12'>
                 {/* Header Section */}
                 <div className='text-center mb-12'>
                     <h1 className='text-5xl font-bold text-white mb-4'>
-                        Welcome to <span className='text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400'>Learnly</span>
+                        Welcome to Learnly
                     </h1>
                     <p className='text-xl text-gray-300 max-w-2xl mx-auto'>
                         Upload your learning materials and transform them into interactive study content
@@ -167,42 +167,6 @@ export default function Home() {
                         <div className='mt-8 pt-6 border-t border-gray-700'>
                             <p className='text-sm text-gray-400 text-center'>
                                 Supported formats: PDF, DOC, DOCX, TXT, MP4, MP3, WAV, PPT, PPTX
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Features Section */}
-                <div className='max-w-6xl mx-auto mt-16'>
-                    <h2 className='text-3xl font-bold text-center text-white mb-12'>
-                        What you can do with Learnly
-                    </h2>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-blue-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdDescription className="text-2xl text-blue-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Smart Notes</h3>
-                            <p className='text-gray-400'>
-                                Transform your documents into structured, searchable notes with AI-powered organization.
-                            </p>
-                        </div>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdVideoLibrary className="text-2xl text-purple-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Video Processing</h3>
-                            <p className='text-gray-400'>
-                                Extract key insights from lectures and videos with automatic transcription and summarization.
-                            </p>
-                        </div>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-green-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdMenuBook className="text-2xl text-green-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Study Materials</h3>
-                            <p className='text-gray-400'>
-                                Convert readings and textbooks into interactive study guides and flashcards.
                             </p>
                         </div>
                     </div>
