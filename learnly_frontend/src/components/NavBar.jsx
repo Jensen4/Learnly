@@ -7,6 +7,15 @@ export default function NavBar() {
     const navigate = useNavigate()
     const location = useLocation()
     
+    // Get active button based on current path
+    const getActiveButton = () => {
+        if (location.pathname === '/notes') return 'Notes'
+        if (location.pathname === '/quizzes') return 'Quizzes'
+        return 'Home'
+    }
+    
+    const [activeButton, setActiveButton] = useState(getActiveButton())
+
     const buttons = [
         { name: 'Home', icon: MdHome, path: '/' },
         { name: 'Notes', icon: MdDescription, path: '/notes' },
@@ -42,6 +51,10 @@ export default function NavBar() {
                                         : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
                                 }`} 
                                 onClick={() => handleNavigation(button.path)}
+                                onClick={() => {
+                                    setActiveButton(button.name)
+                                    navigate(button.path)
+                                }}
                             >
                                 <IconComponent className={`text-xl transition-colors duration-300 ${
                                     isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'
