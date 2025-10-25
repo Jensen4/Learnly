@@ -6,7 +6,7 @@ export default function QuizGenerator() {
     const [quizSettings, setQuizSettings] = useState({
         questionCount: 10,
         difficulty: 'medium',
-        questionTypes: ['multiple-choice', 'true-false', 'short-answer']
+        questionTypes: ['multiple-choice', 'true-false']
     });
     const [isGenerating, setIsGenerating] = useState(false);
     const [quizGenerated, setQuizGenerated] = useState(false);
@@ -54,12 +54,12 @@ export default function QuizGenerator() {
     }
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 pl-80'>
+        <div className='min-h-screen bg-gray-900 pl-80'>
             <div className='container mx-auto px-8 py-12'>
                 {/* Header Section */}
                 <div className='text-center mb-12'>
                     <h1 className='text-5xl font-bold text-white mb-4'>
-                        Create Your <span className='text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400'>Quiz</span>
+                        Create Your Quiz
                     </h1>
                     <p className='text-xl text-gray-300 max-w-2xl mx-auto'>
                         Select your notes and customize quiz settings to generate personalized practice questions
@@ -180,7 +180,6 @@ export default function QuizGenerator() {
                                         {[
                                             { value: 'multiple-choice', label: 'Multiple Choice' },
                                             { value: 'true-false', label: 'True/False' },
-                                            { value: 'short-answer', label: 'Short Answer' }
                                         ].map((type) => (
                                             <label key={type.value} className='flex items-center space-x-3 cursor-pointer '>
                                                 <input
@@ -216,9 +215,9 @@ export default function QuizGenerator() {
                                         <button
                                             onClick={handleGenerateQuiz}
                                             disabled={selectedNotes.length === 0 || isGenerating}
-                                            className={`w-full flex items-center justify-center space-x-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${
+                                            className={`w-full flex items-center justify-center space-x-3 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 ${
                                                 selectedNotes.length > 0 && !isGenerating
-                                                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 shadow-lg cursor-pointer'
+                                                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg cursor-pointer'
                                                     : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                                             }`}
                                         >
@@ -249,7 +248,7 @@ export default function QuizGenerator() {
                                         <div className='flex space-x-3'>
                                             <button
                                                 onClick={handleStartQuiz}
-                                                className='flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold hover:from-green-600 hover:to-blue-600 transition-all duration-300 cursor-pointer'
+                                                className='flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all duration-200 cursor-pointer'
                                             >
                                                 <MdPlayArrow className="text-lg" />
                                                 <span>Start Quiz</span>
@@ -265,42 +264,6 @@ export default function QuizGenerator() {
                                     </div>
                                 )}
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Features Section */}
-                <div className='max-w-6xl mx-auto mt-16'>
-                    <h2 className='text-3xl font-bold text-center text-white mb-12'>
-                        Quiz Features
-                    </h2>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-blue-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdQuiz className="text-2xl text-blue-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Smart Questions</h3>
-                            <p className='text-gray-400'>
-                                AI-generated questions based on your selected notes with varying difficulty levels.
-                            </p>
-                        </div>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdSettings className="text-2xl text-purple-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Customizable</h3>
-                            <p className='text-gray-400'>
-                                Choose question count, difficulty, and types to match your learning style.
-                            </p>
-                        </div>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-green-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdCheckCircle className="text-2xl text-green-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Instant Feedback</h3>
-                            <p className='text-gray-400'>
-                                Get immediate results and explanations to improve your understanding.
-                            </p>
                         </div>
                     </div>
                 </div>

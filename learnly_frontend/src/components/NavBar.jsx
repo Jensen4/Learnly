@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { MdHome, MdDescription, MdQuiz, MdSettings, MdLogout } from 'react-icons/md'
+import { useAuth } from '../contexts/AuthContext'
 import '../index.css'
 
 export default function NavBar() {
     const navigate = useNavigate()
     const location = useLocation()
+    const { user, logout } = useAuth()
     
     // Get active button based on current path
     const getActiveButton = () => {
@@ -17,7 +19,7 @@ export default function NavBar() {
     const [activeButton, setActiveButton] = useState(getActiveButton())
 
     const buttons = [
-        { name: 'Home', icon: MdHome, path: '/' },
+        { name: 'Home', icon: MdHome, path: '/home' },
         { name: 'Notes', icon: MdDescription, path: '/notes' },
         { name: 'Quizzes', icon: MdQuiz, path: '/quizzes' },
     ]
@@ -26,11 +28,16 @@ export default function NavBar() {
         navigate(path)
     }
 
+    function handleLogout() {
+        logout()
+        navigate('/login')
+    }
+
     return (
         <div className="fixed w-80 h-full bg-gray-900 border-r border-gray-700 shadow-2xl flex flex-col">
             {/* Logo Section */}
             <div className="p-8 border-b border-gray-700">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-white">
                     Learnly
                 </h1>
                 <p className="text-sm text-gray-400 mt-1">Your Learning Companion</p>
@@ -45,9 +52,9 @@ export default function NavBar() {
                         return (
                             <button 
                                 key={button.name} 
-                                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer ${
+                                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group cursor-pointer ${
                                     isActive
-                                        ? 'bg-gradient-to-r from-blue-900/50 to-purple-900/50 text-blue-300 border border-blue-700' 
+                                        ? 'bg-blue-600 text-white' 
                                         : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
                                 }`} 
                                 onClick={() => {
@@ -55,8 +62,8 @@ export default function NavBar() {
                                     navigate(button.path)
                                 }}
                             >
-                                <IconComponent className={`text-xl transition-colors duration-300 ${
-                                    isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'
+                                <IconComponent className={`text-xl transition-colors duration-200 ${
+                                    isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'
                                 }`} />
                                 <span className="font-medium">{button.name}</span>
                             </button>
@@ -68,12 +75,18 @@ export default function NavBar() {
             {/* User Section */}
             <div className="p-6 border-t border-gray-700">
                 <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <span className="text-white font-semibold text-sm">U</span>
+                    <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">
+                            {user ? `${user.firstName[0]}${user.lastName[0]}` : 'U'}
+                        </span>
                     </div>
                     <div>
-                        <p className="font-medium text-gray-200">User</p>
-                        <p className="text-sm text-gray-400">Student</p>
+                        <p className="font-medium text-gray-200">
+                            {user ? `${user.firstName} ${user.lastName}` : 'User'}
+                        </p>
+                        <p className="text-sm text-gray-400 capitalize">
+                            {user ? user.userType : 'Student'}
+                        </p>
                     </div>
                 </div>
                 
@@ -82,7 +95,10 @@ export default function NavBar() {
                         <MdSettings className="text-lg" />
                         <span className="text-sm">Settings</span>
                     </button>
-                    <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300 cursor-pointer">
+                    <button 
+                        onClick={handleLogout}
+                        className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300 cursor-pointer"
+                    >
                         <MdLogout className="text-lg" />
                         <span className="text-sm">Logout</span>
                     </button>

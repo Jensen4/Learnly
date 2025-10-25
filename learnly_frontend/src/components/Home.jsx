@@ -1,16 +1,23 @@
 import { useState } from 'react'
 import { MdFileUpload, MdCloudUpload, MdDescription, MdVideoLibrary, MdMenuBook } from "react-icons/md";
+import toast from 'react-hot-toast';
 
 export default function Home() {
     const [fileType, setFileType] = useState("notes");
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [fileTitle, setFileTitle] = useState('');
+    const [showTitleInput, setShowTitleInput] = useState(false);
 
     function handleUpload(event) {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
+            setFileTitle(file.name.replace(/\.[^/.]+$/, '')); // Set default title from filename
+            setShowTitleInput(true);
             console.log("File uploaded:", file.name);
+            toast.success(`File "${file.name}" selected successfully!`);
         }
     }
 
@@ -30,16 +37,52 @@ export default function Home() {
         const file = event.dataTransfer.files[0];
         if (file) {
             setSelectedFile(file);
+            setFileTitle(file.name.replace(/\.[^/.]+$/, '')); // Set default title from filename
+            setShowTitleInput(true);
             console.log("File dropped:", file.name);
+            toast.success(`File "${file.name}" dropped successfully!`);
         }
     }
 
-    function handleSubmit() {
-        if (selectedFile) {
-            console.log("Submitting file:", selectedFile.name, "Type:", fileType);
+    async function handleSubmit() {
+        if (!selectedFile) {
+            toast.error("Please select a file first!");
+            return;
+        }
+
+        if (!fileTitle.trim()) {
+            toast.error("Please enter a title for your file!");
+            return;
+        }
+
+        setIsUploading(true);
+        
+        try {
+            // Simulate API call
+            await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate 90% success rate
+                    if (Math.random() > 0.1) {
+                        resolve();
+                    } else {
+                        reject(new Error("Upload failed"));
+                    }
+                }, 2000);
+            });
+
+            console.log("Submitting file:", selectedFile.name, "Type:", fileType, "Title:", fileTitle);
+            toast.success(`File "${fileTitle}" uploaded successfully!`);
+            
             // Reset form
             setSelectedFile(null);
             setFileType("notes");
+            setFileTitle('');
+            setShowTitleInput(false);
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast.error(`Failed to upload "${fileTitle}". Please try again.`);
+        } finally {
+            setIsUploading(false);
         }
     }
 
@@ -50,12 +93,12 @@ export default function Home() {
     ];
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 pl-80'>
+        <div className='min-h-screen bg-gray-900 pl-80'>
             <div className='container mx-auto px-8 py-12'>
                 {/* Header Section */}
                 <div className='text-center mb-12'>
                     <h1 className='text-5xl font-bold text-white mb-4'>
-                        Welcome to <span className='text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400'>Learnly</span>
+                        Welcome to Learnly
                     </h1>
                     <p className='text-xl text-gray-300 max-w-2xl mx-auto'>
                         Upload your learning materials and transform them into interactive study content
@@ -119,6 +162,23 @@ export default function Home() {
                             />
                         </div>
 
+                        {/* Title Input - shown after file selection */}
+                        {showTitleInput && (
+                            <div className='mb-8'>
+                                <label className='block text-sm font-medium text-gray-300 mb-3'>
+                                    File Title <span className='text-red-400'>*</span>
+                                </label>
+                                <input
+                                    type='text'
+                                    value={fileTitle}
+                                    onChange={(e) => setFileTitle(e.target.value)}
+                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
+                                    placeholder='Enter a title for your file...'
+                                    required
+                                />
+                            </div>
+                        )}
+
                         {/* File Type Selection and Submit */}
                         <div className='flex flex-col lg:flex-row gap-6 items-center justify-between'>
                             {/* File Type Selection */}
@@ -151,14 +211,21 @@ export default function Home() {
                             <div className='flex-shrink-0 pt-8'>
                                 <button 
                                     onClick={handleSubmit} 
-                                    disabled={!selectedFile}
-                                    className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${
-                                        selectedFile
-                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 shadow-lg cursor-pointer'
-                                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                    disabled={!selectedFile || isUploading || !fileTitle.trim()}
+                                    className={`w-[200px] h-[60px] px-8 py-4 rounded-lg font-semibold text-lg transition-colors duration-200 ${
+                                        selectedFile && !isUploading && fileTitle.trim()
+                                            ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                                            : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                                     }`}
                                 >
-                                    {selectedFile ? 'Process File' : 'Select a file first'}
+                                    {isUploading ? (
+                                        <div className="flex flex-row space-x-2">
+                                            <div className='w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-2'></div>
+                                            <span>Uploading...</span>
+                                        </div>
+                                    ) : (
+                                        selectedFile ? (fileTitle.trim() ? 'Process File' : 'Enter title first') : 'Select a file first'
+                                    )}
                                 </button>
                             </div>
                         </div>
@@ -167,42 +234,6 @@ export default function Home() {
                         <div className='mt-8 pt-6 border-t border-gray-700'>
                             <p className='text-sm text-gray-400 text-center'>
                                 Supported formats: PDF, DOC, DOCX, TXT, MP4, MP3, WAV, PPT, PPTX
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Features Section */}
-                <div className='max-w-6xl mx-auto mt-16'>
-                    <h2 className='text-3xl font-bold text-center text-white mb-12'>
-                        What you can do with Learnly
-                    </h2>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-blue-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdDescription className="text-2xl text-blue-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Smart Notes</h3>
-                            <p className='text-gray-400'>
-                                Transform your documents into structured, searchable notes with AI-powered organization.
-                            </p>
-                        </div>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdVideoLibrary className="text-2xl text-purple-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Video Processing</h3>
-                            <p className='text-gray-400'>
-                                Extract key insights from lectures and videos with automatic transcription and summarization.
-                            </p>
-                        </div>
-                        <div className='bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300'>
-                            <div className='w-12 h-12 bg-green-900/50 rounded-xl flex items-center justify-center mb-4'>
-                                <MdMenuBook className="text-2xl text-green-400" />
-                            </div>
-                            <h3 className='text-xl font-semibold text-white mb-2'>Study Materials</h3>
-                            <p className='text-gray-400'>
-                                Convert readings and textbooks into interactive study guides and flashcards.
                             </p>
                         </div>
                     </div>
