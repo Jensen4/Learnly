@@ -1,16 +1,19 @@
 import { useState } from 'react'
 import { MdFileUpload, MdCloudUpload, MdDescription, MdVideoLibrary, MdMenuBook } from "react-icons/md";
+import toast from 'react-hot-toast';
 
 export default function Home() {
     const [fileType, setFileType] = useState("notes");
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     function handleUpload(event) {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
             console.log("File uploaded:", file.name);
+            toast.success(`File "${file.name}" selected successfully!`);
         }
     }
 
@@ -31,15 +34,42 @@ export default function Home() {
         if (file) {
             setSelectedFile(file);
             console.log("File dropped:", file.name);
+            toast.success(`File "${file.name}" dropped successfully!`);
         }
     }
 
-    function handleSubmit() {
-        if (selectedFile) {
+    async function handleSubmit() {
+        if (!selectedFile) {
+            toast.error("Please select a file first!");
+            return;
+        }
+
+        setIsUploading(true);
+        
+        try {
+            // Simulate API call
+            await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate 90% success rate
+                    if (Math.random() > 0.1) {
+                        resolve();
+                    } else {
+                        reject(new Error("Upload failed"));
+                    }
+                }, 2000);
+            });
+
             console.log("Submitting file:", selectedFile.name, "Type:", fileType);
+            toast.success(`File "${selectedFile.name}" uploaded successfully!`);
+            
             // Reset form
             setSelectedFile(null);
             setFileType("notes");
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast.error(`Failed to upload "${selectedFile.name}". Please try again.`);
+        } finally {
+            setIsUploading(false);
         }
     }
 
@@ -151,14 +181,21 @@ export default function Home() {
                             <div className='flex-shrink-0 pt-8'>
                                 <button 
                                     onClick={handleSubmit} 
-                                    disabled={!selectedFile}
+                                    disabled={!selectedFile || isUploading}
                                     className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${
-                                        selectedFile
+                                        selectedFile && !isUploading
                                             ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 shadow-lg cursor-pointer'
                                             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                                     }`}
                                 >
-                                    {selectedFile ? 'Process File' : 'Select a file first'}
+                                    {isUploading ? (
+                                        <>
+                                            <div className='w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-2'></div>
+                                            <span>Uploading...</span>
+                                        </>
+                                    ) : (
+                                        selectedFile ? 'Process File' : 'Select a file first'
+                                    )}
                                 </button>
                             </div>
                         </div>
