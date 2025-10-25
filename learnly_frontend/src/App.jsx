@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
+import QuizPage from './pages/QuizPage'
 import NotesPage from './pages/NotesPage'
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/quizzes" element={<QuizPage />} />
           <Route path="/notes" element={<NotesPage />} />
         </Routes>
       </BrowserRouter>
