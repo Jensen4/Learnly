@@ -1,15 +1,21 @@
 import React, { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { MdHome, MdDescription, MdQuiz, MdSettings, MdLogout } from 'react-icons/md'
 import '../index.css'
 
 export default function NavBar() {
-    const [activeButton, setActiveButton] = useState('Home')
-
+    const navigate = useNavigate()
+    const location = useLocation()
+    
     const buttons = [
-        { name: 'Home', icon: MdHome },
-        { name: 'Notes', icon: MdDescription },
-        { name: 'Quizzes', icon: MdQuiz },
+        { name: 'Home', icon: MdHome, path: '/' },
+        { name: 'Notes', icon: MdDescription, path: '/notes' },
+        { name: 'Quizzes', icon: MdQuiz, path: '/quizzes' },
     ]
+
+    function handleNavigation(path) {
+        navigate(path)
+    }
 
     return (
         <div className="fixed w-80 h-full bg-gray-900 border-r border-gray-700 shadow-2xl flex flex-col">
@@ -26,18 +32,19 @@ export default function NavBar() {
                 <nav className="space-y-2">
                     {buttons.map((button) => {
                         const IconComponent = button.icon;
+                        const isActive = location.pathname === button.path;
                         return (
                             <button 
                                 key={button.name} 
                                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
-                                    activeButton === button.name 
+                                    isActive
                                         ? 'bg-gradient-to-r from-blue-900/50 to-purple-900/50 text-blue-300 border border-blue-700' 
                                         : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
                                 }`} 
-                                onClick={() => setActiveButton(button.name)}
+                                onClick={() => handleNavigation(button.path)}
                             >
                                 <IconComponent className={`text-xl transition-colors duration-300 ${
-                                    activeButton === button.name ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'
+                                    isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'
                                 }`} />
                                 <span className="font-medium">{button.name}</span>
                             </button>
