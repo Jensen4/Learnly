@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { MdAdd, MdDelete, MdOpenInNew, MdSearch, MdFilterList } from 'react-icons/md'
+import { MdAdd, MdDelete, MdOpenInNew, MdSearch, MdFilterList, MdEdit, MdCheck, MdClose } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
 export default function Notes() {
+    const navigate = useNavigate()
     // Mock data - in real app, this would come from backend
     const [notes, setNotes] = useState([
         {
@@ -32,62 +34,37 @@ export default function Notes() {
     ])
 
     const [searchQuery, setSearchQuery] = useState('')
-    const [isAddingNote, setIsAddingNote] = useState(false)
-    const [newNoteTitle, setNewNoteTitle] = useState('')
-    const [newNoteFile, setNewNoteFile] = useState(null)
-    const [isUploading, setIsUploading] = useState(false)
+    const [editingNoteId, setEditingNoteId] = useState(null)
+    const [editingTitle, setEditingTitle] = useState('')
 
-    function handleFileSelect(event) {
-        const file = event.target.files[0]
-        if (file) {
-            setNewNoteFile(file)
-            setNewNoteTitle(file.name.replace(/\.[^/.]+$/, ''))
-            toast.success(`File "${file.name}" selected for upload!`)
-        }
+    function handleEditTitle(note) {
+        setEditingNoteId(note.id)
+        setEditingTitle(note.title)
     }
 
-    async function handleAddNote() {
-        if (!newNoteTitle || !newNoteFile) {
-            toast.error("Please fill in all fields!")
+    function handleSaveTitle(noteId) {
+        if (!editingTitle.trim()) {
+            toast.error("Title cannot be empty!")
             return
         }
         
-        setIsUploading(true)
-        
-        try {
-            // Simulate API call
-            await new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    // Simulate 85% success rate
-                    if (Math.random() > 0.15) {
-                        resolve()
-                    } else {
-                        reject(new Error("Upload failed"))
-                    }
-                }, 1500)
-            })
-            
-            const newNote = {
-                id: notes.length + 1,
-                title: newNoteTitle,
-                preview: 'File uploaded successfully...',
-                date: new Date().toISOString().split('T')[0],
-                category: 'notes',
-                fileSize: (newNoteFile.size / 1024 / 1024).toFixed(2) + ' MB'
-            }
-            
-            console.log('Uploading note to backend:', newNote)
-            setNotes([newNote, ...notes])
-            setIsAddingNote(false)
-            setNewNoteTitle('')
-            setNewNoteFile(null)
-            toast.success(`Note "${newNoteTitle}" uploaded successfully!`)
-        } catch (error) {
-            console.error('Upload error:', error)
-            toast.error(`Failed to upload "${newNoteTitle}". Please try again.`)
-        } finally {
-            setIsUploading(false)
-        }
+        setNotes(notes.map(note => 
+            note.id === noteId 
+                ? { ...note, title: editingTitle.trim() }
+                : note
+        ))
+        setEditingNoteId(null)
+        setEditingTitle('')
+        toast.success("Title updated successfully!")
+    }
+
+    function handleCancelEdit() {
+        setEditingNoteId(null)
+        setEditingTitle('')
+    }
+
+    function handleNewNote() {
+        navigate('/home')
     }
 
     function handleDeleteNote(id) {
@@ -116,78 +93,13 @@ export default function Notes() {
                         </p>
                     </div>
                     <button
-                        onClick={() => setIsAddingNote(!isAddingNote)}
+                        onClick={handleNewNote}
                         className='flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow cursor-pointer'
                     >
                         <MdAdd className='text-2xl text-white' />
                         <span className='text-white font-semibold'>New Note</span>
                     </button>
                 </div>
-
-                {/* Add New Note Section */}
-                {isAddingNote && (
-                    <div className='mb-8 bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700'>
-                        <h2 className='text-2xl font-semibold text-white mb-4'>Upload New Note</h2>
-                        <div className='space-y-4'>
-                            <div>
-                                <label className='block text-sm font-medium text-gray-300 mb-2'>
-                                    Note Title
-                                </label>
-                                <input
-                                    type='text'
-                                    value={newNoteTitle}
-                                    onChange={(e) => setNewNoteTitle(e.target.value)}
-                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
-                                    placeholder='Enter note title...'
-                                />
-                            </div>
-                            <div>
-                                <label className='block text-sm font-medium text-gray-300 mb-2'>
-                                    Upload File
-                                </label>
-                                <input
-                                    type='file'
-                                    onChange={handleFileSelect}
-                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
-                                    accept='.pdf,.doc,.docx,.txt'
-                                />
-                                {newNoteFile && (
-                                    <p className='text-green-400 mt-2'>{newNoteFile.name} selected</p>
-                                )}
-                            </div>
-                            <div className='flex justify-end space-x-3'>
-                                <button
-                                    onClick={() => {
-                                        setIsAddingNote(false)
-                                        setNewNoteTitle('')
-                                        setNewNoteFile(null)
-                                    }}
-                                    className='px-6 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors duration-200 cursor-pointer'
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleAddNote}
-                                    disabled={!newNoteTitle || !newNoteFile}
-                                                            className={`px-6 py-2 rounded-lg transition-colors duration-200 ${
-                                         newNoteTitle && newNoteFile
-                                             ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
-                                             : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                     }`}
-                                >
-                                    {isUploading ? (
-                                        <>
-                                            <div className='w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block mr-2'></div>
-                                            Uploading...
-                                        </>
-                                    ) : (
-                                        'Upload'
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {/* Search and Filter Section */}
                 <div className='mb-6 flex gap-4'>
@@ -232,9 +144,43 @@ export default function Notes() {
                                             <MdDelete className='text-xl' />
                                         </button>
                                     </div>
-                                    <h3 className='text-xl font-semibold text-white mb-2 line-clamp-2'>
-                                        {note.title}
-                                    </h3>
+                                    {editingNoteId === note.id ? (
+                                        <div className='mb-2'>
+                                            <input
+                                                type='text'
+                                                value={editingTitle}
+                                                onChange={(e) => setEditingTitle(e.target.value)}
+                                                className='w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500 text-xl font-semibold'
+                                                autoFocus
+                                            />
+                                            <div className='flex space-x-2 mt-2'>
+                                                <button
+                                                    onClick={() => handleSaveTitle(note.id)}
+                                                    className='p-1 text-green-400 hover:text-green-300 cursor-pointer'
+                                                >
+                                                    <MdCheck className='text-lg' />
+                                                </button>
+                                                <button
+                                                    onClick={handleCancelEdit}
+                                                    className='p-1 text-red-400 hover:text-red-300 cursor-pointer'
+                                                >
+                                                    <MdClose className='text-lg' />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className='flex items-center justify-between mb-2'>
+                                            <h3 className='text-xl font-semibold text-white line-clamp-2 flex-1'>
+                                                {note.title}
+                                            </h3>
+                                            <button
+                                                onClick={() => handleEditTitle(note)}
+                                                className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-blue-400 hover:text-blue-300 cursor-pointer ml-2'
+                                            >
+                                                <MdEdit className='text-lg' />
+                                            </button>
+                                        </div>
+                                    )}
                                     <p className='text-gray-400 text-sm mb-4 line-clamp-2'>
                                         {note.preview}
                                     </p>
