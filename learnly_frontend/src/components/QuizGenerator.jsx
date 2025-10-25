@@ -6,7 +6,7 @@ export default function QuizGenerator() {
     const [quizSettings, setQuizSettings] = useState({
         questionCount: 10,
         difficulty: 'medium',
-        questionTypes: ['multiple-choice', 'true-false', 'short-answer']
+        questionTypes: ['multiple-choice', 'true-false']
     });
     const [isGenerating, setIsGenerating] = useState(false);
     const [quizGenerated, setQuizGenerated] = useState(false);
@@ -180,7 +180,6 @@ export default function QuizGenerator() {
                                         {[
                                             { value: 'multiple-choice', label: 'Multiple Choice' },
                                             { value: 'true-false', label: 'True/False' },
-                                            { value: 'short-answer', label: 'Short Answer' }
                                         ].map((type) => (
                                             <label key={type.value} className='flex items-center space-x-3 cursor-pointer '>
                                                 <input
