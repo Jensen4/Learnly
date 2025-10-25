@@ -88,7 +88,7 @@ export default function Notes() {
                     </div>
                     <button
                         onClick={() => setIsAddingNote(!isAddingNote)}
-                        className='flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl'
+                        className='flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer'
                     >
                         <MdAdd className='text-2xl text-white' />
                         <span className='text-white font-semibold'>New Note</span>
@@ -133,14 +133,18 @@ export default function Notes() {
                                         setNewNoteTitle('')
                                         setNewNoteFile(null)
                                     }}
-                                    className='px-6 py-2 bg-gray-600 text-gray-300 rounded-xl hover:bg-gray-500 transition-colors duration-300'
+                                    className='px-6 py-2 bg-gray-600 text-gray-300 rounded-xl hover:bg-gray-500 transition-colors duration-300 cursor-pointer'
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleAddNote}
                                     disabled={!newNoteTitle || !newNoteFile}
-                                    className='px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                                    className={`px-6 py-2 rounded-xl transition-all duration-300 ${
+                                        newNoteTitle && newNoteFile
+                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 cursor-pointer'
+                                            : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50'
+                                    }`}
                                 >
                                     Upload
                                 </button>
@@ -161,7 +165,7 @@ export default function Notes() {
                             className='w-full pl-12 pr-4 py-3 bg-gray-800 text-white rounded-xl border border-gray-700 focus:outline-none focus:border-blue-500'
                         />
                     </div>
-                    <button className='px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 hover:bg-gray-700 transition-colors duration-300'>
+                    <button className='px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 hover:bg-gray-700 transition-colors duration-300 cursor-pointer'>
                         <MdFilterList className='text-gray-300 text-xl' />
                     </button>
                 </div>
@@ -172,9 +176,9 @@ export default function Notes() {
                         {filteredNotes.map((note) => (
                             <div
                                 key={note.id}
-                                className='bg-gray-800 rounded-2xl shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300 overflow-hidden group'
+                                className='bg-gray-800 rounded-2xl shadow-lg border border-gray-700 hover:shadow-xl hover:border-gray-600 transition-all duration-300 overflow-hidden group flex flex-col'
                             >
-                                <div className='p-6'>
+                                <div className='p-6 flex-1'>
                                     <div className='flex justify-between items-start mb-3'>
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                             note.category === 'lecture' 
@@ -187,7 +191,7 @@ export default function Notes() {
                                         </span>
                                         <button
                                             onClick={() => handleDeleteNote(note.id)}
-                                            className='opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-red-400 hover:text-red-300'
+                                            className='opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-red-400 hover:text-red-300 cursor-pointer'
                                         >
                                             <MdDelete className='text-xl' />
                                         </button>
@@ -198,13 +202,13 @@ export default function Notes() {
                                     <p className='text-gray-400 text-sm mb-4 line-clamp-2'>
                                         {note.preview}
                                     </p>
-                                    <div className='flex justify-between items-center text-sm text-gray-500 mb-4'>
+                                    <div className='flex justify-between items-center text-sm text-gray-500'>
                                         <span>{note.date}</span>
                                         <span>{note.fileSize}</span>
                                     </div>
                                 </div>
-                                <div className='px-6 py-4 bg-gray-700/50 flex justify-between'>
-                                    <button className='flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors duration-300'>
+                                <div className='px-6 py-4 bg-gray-700/50 flex justify-end mt-auto'>
+                                    <button className='flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors duration-300 cursor-pointer'>
                                         <MdOpenInNew className='text-lg' />
                                         <span className='font-medium'>Open</span>
                                     </button>

@@ -45,12 +45,11 @@ export default function NavBar() {
                         return (
                             <button 
                                 key={button.name} 
-                                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+                                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer ${
                                     isActive
                                         ? 'bg-gradient-to-r from-blue-900/50 to-purple-900/50 text-blue-300 border border-blue-700' 
                                         : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
                                 }`} 
-                                onClick={() => handleNavigation(button.path)}
                                 onClick={() => {
                                     setActiveButton(button.name)
                                     navigate(button.path)
@@ -79,11 +78,11 @@ export default function NavBar() {
                 </div>
                 
                 <div className="space-y-2">
-                    <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300">
+                    <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300 cursor-pointer">
                         <MdSettings className="text-lg" />
                         <span className="text-sm">Settings</span>
                     </button>
-                    <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300">
+                    <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300 cursor-pointer">
                         <MdLogout className="text-lg" />
                         <span className="text-sm">Logout</span>
                     </button>

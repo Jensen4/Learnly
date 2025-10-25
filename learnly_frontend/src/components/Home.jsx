@@ -133,7 +133,7 @@ export default function Home() {
                                             <button
                                                 key={option.value}
                                                 onClick={() => setFileType(option.value)}
-                                                className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-all duration-300 ${
+                                                className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer ${
                                                     fileType === option.value
                                                         ? 'border-blue-400 bg-blue-900/30 text-blue-300'
                                                         : 'border-gray-600 hover:border-gray-500 hover:bg-gray-700/50 text-gray-300'
@@ -154,7 +154,7 @@ export default function Home() {
                                     disabled={!selectedFile}
                                     className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${
                                         selectedFile
-                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 shadow-lg'
+                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 shadow-lg cursor-pointer'
                                             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                                     }`}
                                 >
