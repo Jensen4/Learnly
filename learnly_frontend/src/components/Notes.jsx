@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MdAdd, MdDelete, MdOpenInNew, MdSearch, MdFilterList } from 'react-icons/md'
+import toast from 'react-hot-toast'
 
 export default function Notes() {
     // Mock data - in real app, this would come from backend
@@ -34,17 +35,38 @@ export default function Notes() {
     const [isAddingNote, setIsAddingNote] = useState(false)
     const [newNoteTitle, setNewNoteTitle] = useState('')
     const [newNoteFile, setNewNoteFile] = useState(null)
+    const [isUploading, setIsUploading] = useState(false)
 
     function handleFileSelect(event) {
         const file = event.target.files[0]
         if (file) {
             setNewNoteFile(file)
             setNewNoteTitle(file.name.replace(/\.[^/.]+$/, ''))
+            toast.success(`File "${file.name}" selected for upload!`)
         }
     }
 
-    function handleAddNote() {
-        if (newNoteTitle && newNoteFile) {
+    async function handleAddNote() {
+        if (!newNoteTitle || !newNoteFile) {
+            toast.error("Please fill in all fields!")
+            return
+        }
+        
+        setIsUploading(true)
+        
+        try {
+            // Simulate API call
+            await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate 85% success rate
+                    if (Math.random() > 0.15) {
+                        resolve()
+                    } else {
+                        reject(new Error("Upload failed"))
+                    }
+                }, 1500)
+            })
+            
             const newNote = {
                 id: notes.length + 1,
                 title: newNoteTitle,
@@ -53,19 +75,26 @@ export default function Notes() {
                 category: 'notes',
                 fileSize: (newNoteFile.size / 1024 / 1024).toFixed(2) + ' MB'
             }
-            // TODO: Upload to backend
+            
             console.log('Uploading note to backend:', newNote)
             setNotes([newNote, ...notes])
             setIsAddingNote(false)
             setNewNoteTitle('')
             setNewNoteFile(null)
+            toast.success(`Note "${newNoteTitle}" uploaded successfully!`)
+        } catch (error) {
+            console.error('Upload error:', error)
+            toast.error(`Failed to upload "${newNoteTitle}". Please try again.`)
+        } finally {
+            setIsUploading(false)
         }
     }
 
     function handleDeleteNote(id) {
-        // TODO: Delete from backend
+        const note = notes.find(n => n.id === id)
         console.log('Deleting note from backend:', id)
         setNotes(notes.filter(note => note.id !== id))
+        toast.success(`Note "${note?.title}" deleted successfully!`)
     }
 
     const filteredNotes = notes.filter(note =>
@@ -139,14 +168,21 @@ export default function Notes() {
                                 </button>
                                 <button
                                     onClick={handleAddNote}
-                                    disabled={!newNoteTitle || !newNoteFile}
+                                    disabled={!newNoteTitle || !newNoteFile || isUploading}
                                     className={`px-6 py-2 rounded-xl transition-all duration-300 ${
-                                        newNoteTitle && newNoteFile
+                                        newNoteTitle && newNoteFile && !isUploading
                                             ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 cursor-pointer'
                                             : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50'
                                     }`}
                                 >
-                                    Upload
+                                    {isUploading ? (
+                                        <>
+                                            <div className='w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block mr-2'></div>
+                                            Uploading...
+                                        </>
+                                    ) : (
+                                        'Upload'
+                                    )}
                                 </button>
                             </div>
                         </div>
