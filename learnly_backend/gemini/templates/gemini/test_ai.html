@@ -1,0 +1,120 @@
+{% extends 'gemini/base.html' %}
+
+{% block title %}AI Test Interface - Learnly{% endblock %}
+
+{% block header_title %}AI Test Interface{% endblock %}
+{% block header_subtitle %}Test the Gemini AI with custom prompts{% endblock %}
+
+{% block content %}
+<form id="aiTestForm">
+    <div class="form-group">
+        <label for="prompt">Enter your prompt:</label>
+        <textarea 
+            id="prompt" 
+            name="prompt" 
+            placeholder="Ask the AI anything... (e.g., 'Explain quantum computing in simple terms', 'Write a short story about a robot', 'What are the benefits of renewable energy?')"
+            required
+        ></textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="promptType">Prompt Type:</label>
+        <select id="promptType" name="promptType">
+            <option value="general">General Question</option>
+            <option value="explanation">Explanation</option>
+            <option value="creative">Creative Writing</option>
+            <option value="technical">Technical</option>
+            <option value="educational">Educational</option>
+        </select>
+    </div>
+    
+    <button type="submit" class="btn" id="submitBtn">
+        Generate Response
+    </button>
+</form>
+
+<div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>AI is thinking...</p>
+</div>
+
+<div class="result" id="result" style="display: none;">
+    <h3>AI Response:</h3>
+    <div class="result-content" id="resultContent"></div>
+</div>
+
+<script>
+document.getElementById('aiTestForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const prompt = document.getElementById('prompt').value.trim();
+    const promptType = document.getElementById('promptType').value;
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!prompt) {
+        alert('Please enter a prompt');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Generating...';
+    showLoading();
+    
+    try {
+        const response = await fetch('/gemini/generate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                type: promptType
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showResult(data.content, false);
+        } else {
+            showResult(`Error: ${data.error}`, true);
+        }
+        
+    } catch (error) {
+        showResult(`Network Error: ${error.message}`, true);
+    } finally {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Generate Response';
+    }
+});
+
+// Add some example prompts for quick testing
+const examplePrompts = [
+    "Explain machine learning in simple terms",
+    "Write a short story about a time traveler",
+    "What are the benefits of renewable energy?",
+    "How does photosynthesis work?",
+    "Create a recipe for chocolate chip cookies",
+    "Explain the water cycle",
+    "What is artificial intelligence?",
+    "Write a poem about the ocean"
+];
+
+// Add example buttons
+const exampleContainer = document.createElement('div');
+exampleContainer.innerHTML = `
+    <div class="form-group">
+        <label>Quick Examples:</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+            ${examplePrompts.map(prompt => 
+                `<button type="button" class="btn" style="font-size: 14px; padding: 8px 15px; background: #6c757d;" onclick="document.getElementById('prompt').value = '${prompt}'">${prompt.substring(0, 30)}...</button>`
+            ).join('')}
+        </div>
+    </div>
+`;
+
+document.querySelector('.form-group:first-of-type').after(exampleContainer);
+</script>
+{% endblock %}
