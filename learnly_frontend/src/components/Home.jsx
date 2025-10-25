@@ -182,17 +182,17 @@ export default function Home() {
                                 <button 
                                     onClick={handleSubmit} 
                                     disabled={!selectedFile || isUploading}
-                                    className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${
+                                    className={`w-[200px] h-[60px] px-8 py-4 rounded-lg font-semibold text-lg transition-colors duration-200 ${
                                         selectedFile && !isUploading
-                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 shadow-lg cursor-pointer'
-                                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                            ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                                            : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                                     }`}
                                 >
                                     {isUploading ? (
-                                        <>
+                                        <div className="flex flex-row space-x-2">
                                             <div className='w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-2'></div>
                                             <span>Uploading...</span>
-                                        </>
+                                        </div>
                                     ) : (
                                         selectedFile ? 'Process File' : 'Select a file first'
                                     )}
