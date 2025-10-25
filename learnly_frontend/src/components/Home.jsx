@@ -7,11 +7,15 @@ export default function Home() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [fileTitle, setFileTitle] = useState('');
+    const [showTitleInput, setShowTitleInput] = useState(false);
 
     function handleUpload(event) {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
+            setFileTitle(file.name.replace(/\.[^/.]+$/, '')); // Set default title from filename
+            setShowTitleInput(true);
             console.log("File uploaded:", file.name);
             toast.success(`File "${file.name}" selected successfully!`);
         }
@@ -33,6 +37,8 @@ export default function Home() {
         const file = event.dataTransfer.files[0];
         if (file) {
             setSelectedFile(file);
+            setFileTitle(file.name.replace(/\.[^/.]+$/, '')); // Set default title from filename
+            setShowTitleInput(true);
             console.log("File dropped:", file.name);
             toast.success(`File "${file.name}" dropped successfully!`);
         }
@@ -41,6 +47,11 @@ export default function Home() {
     async function handleSubmit() {
         if (!selectedFile) {
             toast.error("Please select a file first!");
+            return;
+        }
+
+        if (!fileTitle.trim()) {
+            toast.error("Please enter a title for your file!");
             return;
         }
 
@@ -59,15 +70,17 @@ export default function Home() {
                 }, 2000);
             });
 
-            console.log("Submitting file:", selectedFile.name, "Type:", fileType);
-            toast.success(`File "${selectedFile.name}" uploaded successfully!`);
+            console.log("Submitting file:", selectedFile.name, "Type:", fileType, "Title:", fileTitle);
+            toast.success(`File "${fileTitle}" uploaded successfully!`);
             
             // Reset form
             setSelectedFile(null);
             setFileType("notes");
+            setFileTitle('');
+            setShowTitleInput(false);
         } catch (error) {
             console.error("Upload error:", error);
-            toast.error(`Failed to upload "${selectedFile.name}". Please try again.`);
+            toast.error(`Failed to upload "${fileTitle}". Please try again.`);
         } finally {
             setIsUploading(false);
         }
@@ -149,6 +162,23 @@ export default function Home() {
                             />
                         </div>
 
+                        {/* Title Input - shown after file selection */}
+                        {showTitleInput && (
+                            <div className='mb-8'>
+                                <label className='block text-sm font-medium text-gray-300 mb-3'>
+                                    File Title <span className='text-red-400'>*</span>
+                                </label>
+                                <input
+                                    type='text'
+                                    value={fileTitle}
+                                    onChange={(e) => setFileTitle(e.target.value)}
+                                    className='w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
+                                    placeholder='Enter a title for your file...'
+                                    required
+                                />
+                            </div>
+                        )}
+
                         {/* File Type Selection and Submit */}
                         <div className='flex flex-col lg:flex-row gap-6 items-center justify-between'>
                             {/* File Type Selection */}
@@ -181,9 +211,9 @@ export default function Home() {
                             <div className='flex-shrink-0 pt-8'>
                                 <button 
                                     onClick={handleSubmit} 
-                                    disabled={!selectedFile || isUploading}
+                                    disabled={!selectedFile || isUploading || !fileTitle.trim()}
                                     className={`w-[200px] h-[60px] px-8 py-4 rounded-lg font-semibold text-lg transition-colors duration-200 ${
-                                        selectedFile && !isUploading
+                                        selectedFile && !isUploading && fileTitle.trim()
                                             ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
                                             : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                                     }`}
@@ -194,7 +224,7 @@ export default function Home() {
                                             <span>Uploading...</span>
                                         </div>
                                     ) : (
-                                        selectedFile ? 'Process File' : 'Select a file first'
+                                        selectedFile ? (fileTitle.trim() ? 'Process File' : 'Enter title first') : 'Select a file first'
                                     )}
                                 </button>
                             </div>
