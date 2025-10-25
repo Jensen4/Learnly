@@ -1,0 +1,144 @@
+{% extends 'gemini/base.html' %}
+
+{% block title %}PDF Summarizer - Learnly{% endblock %}
+
+{% block header_title %}PDF Summarizer{% endblock %}
+{% block header_subtitle %}Upload a PDF and get an AI-powered summary{% endblock %}
+
+{% block content %}
+<form id="pdfUploadForm" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="pdfFile">Select PDF File:</label>
+        <input 
+            type="file" 
+            id="pdfFile" 
+            name="pdf_file" 
+            accept=".pdf"
+            required
+        >
+        <small style="color: #666; margin-top: 5px; display: block;">
+            Supported format: PDF files only
+        </small>
+    </div>
+    
+    <button type="submit" class="btn" id="submitBtn">
+        Summarize PDF
+    </button>
+</form>
+
+<div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Processing PDF and generating summary...</p>
+</div>
+
+<div class="result" id="result" style="display: none;">
+    <h3>PDF Summary:</h3>
+    <div class="result-content" id="resultContent"></div>
+</div>
+
+<script>
+document.getElementById('pdfUploadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('pdfFile');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!fileInput.files[0]) {
+        alert('Please select a PDF file');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing...';
+    showLoading();
+    
+    try {
+        const formData = new FormData();
+        formData.append('pdf_file', fileInput.files[0]);
+        
+        const response = await fetch('/gemini/pdf-summarize/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Format the JSON response nicely
+            const formattedData = formatSummaryData(data);
+            showResult(formattedData, false);
+        } else {
+            showResult(`Error: ${data.error}`, true);
+        }
+        
+    } catch (error) {
+        showResult(`Network Error: ${error.message}`, true);
+    } finally {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Summarize PDF';
+    }
+});
+
+function formatSummaryData(data) {
+    let formatted = '';
+    
+    if (data.title) {
+        formatted += `📄 Title: ${data.title}\n\n`;
+    }
+    
+    if (data.summary) {
+        formatted += `📝 Summary:\n${data.summary}\n\n`;
+    }
+    
+    if (data.key_points && data.key_points.length > 0) {
+        formatted += `🔑 Key Points:\n`;
+        data.key_points.forEach((point, index) => {
+            formatted += `${index + 1}. ${point}\n`;
+        });
+        formatted += '\n';
+    }
+    
+    if (data.main_topics && data.main_topics.length > 0) {
+        formatted += `📚 Main Topics:\n`;
+        data.main_topics.forEach((topic, index) => {
+            formatted += `${index + 1}. ${topic}\n`;
+        });
+        formatted += '\n';
+    }
+    
+    if (data.conclusion) {
+        formatted += `🎯 Conclusion:\n${data.conclusion}`;
+    }
+    
+    return formatted || JSON.stringify(data, null, 2);
+}
+
+// Add drag and drop functionality
+const fileInput = document.getElementById('pdfFile');
+const formGroup = fileInput.parentElement;
+
+formGroup.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    formGroup.style.backgroundColor = '#f0f8ff';
+});
+
+formGroup.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    formGroup.style.backgroundColor = '';
+});
+
+formGroup.addEventListener('drop', function(e) {
+    e.preventDefault();
+    formGroup.style.backgroundColor = '';
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type === 'application/pdf') {
+        fileInput.files = files;
+    } else {
+        alert('Please drop a PDF file');
+    }
+});
+</script>
+{% endblock %}
