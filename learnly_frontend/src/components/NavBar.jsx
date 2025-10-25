@@ -1,14 +1,25 @@
 import React, { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { MdHome, MdDescription, MdQuiz, MdSettings, MdLogout } from 'react-icons/md'
 import '../index.css'
 
 export default function NavBar() {
-    const [activeButton, setActiveButton] = useState('Home')
+    const navigate = useNavigate()
+    const location = useLocation()
+    
+    // Get active button based on current path
+    const getActiveButton = () => {
+        if (location.pathname === '/notes') return 'Notes'
+        if (location.pathname === '/quizzes') return 'Quizzes'
+        return 'Home'
+    }
+    
+    const [activeButton, setActiveButton] = useState(getActiveButton())
 
     const buttons = [
-        { name: 'Home', icon: MdHome },
-        { name: 'Notes', icon: MdDescription },
-        { name: 'Quizzes', icon: MdQuiz },
+        { name: 'Home', icon: MdHome, path: '/' },
+        { name: 'Notes', icon: MdDescription, path: '/notes' },
+        { name: 'Quizzes', icon: MdQuiz, path: '/quizzes' },
     ]
 
     return (
@@ -34,7 +45,10 @@ export default function NavBar() {
                                         ? 'bg-gradient-to-r from-blue-900/50 to-purple-900/50 text-blue-300 border border-blue-700' 
                                         : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
                                 }`} 
-                                onClick={() => setActiveButton(button.name)}
+                                onClick={() => {
+                                    setActiveButton(button.name)
+                                    navigate(button.path)
+                                }}
                             >
                                 <IconComponent className={`text-xl transition-colors duration-300 ${
                                     activeButton === button.name ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'
